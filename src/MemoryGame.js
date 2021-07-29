@@ -10,6 +10,7 @@ const CardState = {
 }
 
 class MemoryGame extends Component {
+	
 	constructor(props){
 		super(props);
 		
@@ -31,27 +32,32 @@ class MemoryGame extends Component {
 			{id: 14, cardState: CardState.HIDING, backgroundColor: 'lightskyblue'},
 			{id: 15, cardState: CardState.HIDING, backgroundColor: 'lightskyblue'}
 		];
-		
 		cards = shuffle(cards);
+		
+		
 		this.state = {cards, noClick: false};
 		
 		this.handleClick = this.handleClick.bind(this);		
 		this.handleNewGame = this.handleNewGame.bind(this);
-
 	}
 	
 	handleNewGame(){
+		
+		// Set card state to hiding and shuffle
 		let cards = this.state.cards.map(c => ({
 			...c, 
 			cardState: CardState.HIDING
 		}))
 		cards = shuffle(cards);
+		
 		this.setState({cards});
 	}
 	
 	handleClick(id){
+		
 		const mapCardState = (cards, idsToChange, newCardState) => {
 			return cards.map(c => {
+				//Find ids selected and return cards with new cardState
 				if(idsToChange.includes(c.id)) {
 					return {
 						...c, cardState: newCardState
@@ -61,24 +67,35 @@ class MemoryGame extends Component {
 			});
 		}
 		
+		//Find cards with matching id
 		const foundCard = this.state.cards.find(c => c.id === id);
 		
+		// If no click is true or foundCard state is not HIDING - return 
 		if(this.state.noClick || foundCard.cardState !== CardState.HIDING){
 			return;
 		}
 		
+		// Set no click to false
 		let noClick = false;
 		
+		// Call mapCardState function
 		let cards = mapCardState(this.state.cards, [id], CardState.SHOWING);
 		
+		// Filter out cards with card state equal to showing
 		const showingCards = cards.filter((c) => c.cardState === CardState.SHOWING);
 		
+		// Get ids of cards that are showing
 		const ids = showingCards.map(c => c.id);
 		
 		if(showingCards.length === 2 && showingCards[0].backgroundColor === showingCards[1].backgroundColor){
+			// If 2 cards are showing and backgroundColor is equal for both, call mapCardState to set card state as matching
 			cards = mapCardState(cards, ids, CardState.MATCHING);
+		
 		} else if (showingCards.length === 2){
+			// If 2 cards are showing but do not match - set card state to hiding
 			let hidingCards = mapCardState(cards, ids, CardState.HIDING);
+			
+			// set no click to false after 1300ms
 			noClick = true;
 			
 			this.setState({cards, noClick}, () => {
@@ -94,6 +111,7 @@ class MemoryGame extends Component {
 	}
 	
 	render(){
+		
 		const cards = this.state.cards.map((card) => (
 			<Card 
 				key={card.id}

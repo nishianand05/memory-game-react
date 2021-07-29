@@ -5,6 +5,7 @@ import './Card.css'
 const Card = (props) => {
 	
 	let style = {};
+	
 	if(props.showing){
 		style.backgroundColor = props.backgroundColor;
 	}
@@ -14,8 +15,7 @@ const Card = (props) => {
 			onClick={props.onClick} 
 			className = "card-container" 
 			style={style}
-		>
-		</div>
+		></div>
 	)
 }
 
